@@ -1,0 +1,9 @@
+CREATE DATABASE IF NOT EXISTS fractal;
+USE fractal;
+
+CREATE USER IF NOT EXISTS tachun;
+GRANT CREATE ON DATABASE fractal TO tachun;
+
+DROP SCHEMA IF EXISTS tachun_schema CASCADE;
+CREATE SCHEMA tachun_schema AUTHORIZATION tachun;
+
