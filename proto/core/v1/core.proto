@@ -1,0 +1,81 @@
+syntax = "proto3";
+package core.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/field_mask.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/tachunwu/fractal/pkg/proto/core/v1";
+
+service FractalService {
+    rpc ListUsers(ListUsersRequest) returns (ListUsersResponse) {
+        option (google.api.http) = {
+          get: "/v1/users"
+        };
+    }
+    rpc CreateUser(CreateUserRequest) returns (CreateUserResponse){
+        option (google.api.http) = {
+			post: "/v1/users"
+			response_body: "user"
+		};
+    }
+    rpc GetUser(GetUserRequest) returns (GetUserResponse){
+        option (google.api.http) = {
+			get: "/v1/users/{name}"
+			response_body: "user"
+		};
+    }
+    rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse){
+        option (google.api.http) = {
+			patch: "/v1/users/{user.name}"
+			body: "*"
+		};
+    }
+    rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse){
+        option (google.api.http) = {
+			delete: "/v1/users/{name}"
+			response_body: "*"
+		};
+    } 
+}
+
+message ListUsersRequest {
+    int32 page_size = 1;
+    string page_token = 2;
+}
+
+message ListUsersResponse {
+    repeated User users = 1;
+    string next_page_token = 2;
+}
+
+message CreateUserRequest {
+    User user = 1
+    [ (validate.rules).message.required = true ];
+}
+message CreateUserResponse {
+    User user = 1;
+}
+message GetUserRequest {
+    string name = 1;
+}
+message GetUserResponse {
+    User user = 1;
+}
+message UpdateUserRequest {
+    User user = 1
+    [ (validate.rules).message.required = true ];
+    google.protobuf.FieldMask update_mask = 2;
+}
+message UpdateUserResponse {
+    User user = 1;
+}
+message DeleteUserRequest {
+    string name = 1;
+}
+message DeleteUserResponse {}
+
+message User {
+    string name = 1;
+    string email = 2 [(validate.rules).string.email = true];
+}
